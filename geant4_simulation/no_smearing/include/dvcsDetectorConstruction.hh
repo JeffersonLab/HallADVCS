@@ -29,6 +29,8 @@ private:
   G4LogicalVolume *nouse_shield_log;
   G4LogicalVolume *beamline_shield_log;
   G4LogicalVolume *HRS_window_log;
+  G4LogicalVolume *calo_al_window_log;
+  G4LogicalVolume *pb_pipe_log;
 
   //Physical Volumes
   G4VPhysicalVolume *world_phys;  // Experimental Hall
@@ -40,7 +42,11 @@ private:
   G4VPhysicalVolume *kapton_window_phys; // Kapton Window
   G4VPhysicalVolume *nouse_shield_phys; // nouse_shield
   G4VPhysicalVolume *beamline_shield_phys; // beamline_shield
+  G4VPhysicalVolume *calo_al_window_phys; // calo Kapton Window
   G4VPhysicalVolume *HRS_window_phys;       // HRS front window, in order to detect scettered electron, and it's energy loss
+  G4VPhysicalVolume *pb_pipe_phys;
+
+
 };
 
 
