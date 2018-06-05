@@ -27,9 +27,8 @@
 #include "G4TransportationManager.hh"
 #include "DVCSCaloGeom.hh"
 #include "DVCSCalo.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4PhysicalConstants.hh"
-
+#include "TDVCSDB.h"
+#include "dvcsGlobals.hh"
 
 
 DVCSCaloConstruction::DVCSCaloConstruction()
@@ -153,16 +152,16 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
   Tedlar_log->SetVisAttributes(atTed);
 
   //------------------------------ Small Slim 
-  
+  /*
   G4LogicalVolume* SShim_log= CaloGeom->SShimlog(Laiton);
   SShim_log->SetVisAttributes(at1);
-  
+  */
 
   //------------------------------ Big Shim
-  
+  /*
   G4LogicalVolume* BShim_log= CaloGeom->BShimlog(Laiton);
   BShim_log->SetVisAttributes(at1);
-
+  */
   //------------------------------ the calorimeter
 
   G4double calo_x = 2.002*double(nbcol)*block_width/2.;
@@ -175,8 +174,8 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
   Calo_log-> SetVisAttributes (at1);
   //------------------------------- now we put the blocks in the calorimeter
  
-  G4int nSShim=0;
-  G4int nBShim=0;
+  //G4int nSShim=0;
+  //G4int nBShim=0;
   G4double z_block=block_length/2.-calo_z+3*cm;
   G4double x_global=calo_x/1.85;
 
@@ -191,6 +190,23 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
     }
   */
 
+  
+  int run_number = dvcsGlobals::run_number;
+
+  TDVCSDB *db=new TDVCSDB("dvcs","clrlpc",3306,"munoz","");
+  Float_t *x_blockDB = db->GetEntry_f("CALO_geom_X",run_number);
+  Float_t *y_blockDB = db->GetEntry_f("CALO_geom_Y",run_number);
+
+  for(G4int col=0;col<nbcol;col++)
+    {
+    for(G4int row=0;row<nbrow;row++)
+      {
+	x_block[col*nbrow+row] = x_blockDB[col*nbrow+row]*10.0;
+	y_block[col*nbrow+row] = y_blockDB[col*nbrow+row]*10.0;
+      }
+    }
+  
+
   for(G4int col=0;col<nbcol;col++)
     {
     for(G4int row=0;row<nbrow;row++)
@@ -200,7 +216,96 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
 	G4double adjust_x=0;
 	
 	//adjust_x and adjust_y avoid some overlaps in the building of the calorimeter. 
+	if(run_number>=10000 && run_number<=12199){
+	  //Fall 2014
+	  if(col*nbrow+row==12) adjust_x=-0.007*cm;
+	  if(col*nbrow+row==28) {adjust_x=-0.002*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==29) adjust_x=0.0001*cm;
+	  if(col*nbrow+row==31) adjust_y=0.0005*cm;
+	  if(col*nbrow+row==44) adjust_x=-0.001*cm;
+	  if(col*nbrow+row==45) {adjust_x=0.002*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==60) adjust_x=-0.0055*cm;
+	  if(col*nbrow+row==71) adjust_x=0.005*cm;
+	  if(col*nbrow+row==75) adjust_x=0.0045*cm;
+	  if(col*nbrow+row==76) {adjust_x=-0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==91) adjust_x=0.0005*cm;
+	  if(col*nbrow+row==92) adjust_x=-0.0005*cm;
+	  if(col*nbrow+row==93) {adjust_x=0.0015*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==94) adjust_x=-0.001*cm;
+	  if(col*nbrow+row==95) adjust_y=0.002*cm;
+	  if(col*nbrow+row==109) adjust_x=0.005*cm;
+	  if(col*nbrow+row==111) adjust_x=0.0025*cm;
+	  if(col*nbrow+row==124) adjust_x=0.002*cm;
+	  if(col*nbrow+row==127) adjust_x=0.001*cm;
+	  if(col*nbrow+row==145) adjust_y=0.002*cm;
+	  if(col*nbrow+row==159) adjust_y=0.005*cm;
+	  if(col*nbrow+row==161) adjust_y=0.001*cm;
+	  if(col*nbrow+row==171) adjust_x=0.001*cm;
+	  if(col*nbrow+row==173) adjust_y=-0.011*cm;
+	  if(col*nbrow+row==174) adjust_y=0.011*cm;
+	  if(col*nbrow+row==175) adjust_y=0.0005*cm;
+	  if(col*nbrow+row==189) adjust_x=0.002*cm;
+	  if(col*nbrow+row==190) adjust_x=0.002*cm;
+	  if(col*nbrow+row==207) adjust_x=0.001*cm;
+	}
+
+	else if(run_number>=12200 && run_number<=13799){
+	  //Spring 2016
+	  if(col*nbrow+row==26) adjust_y=-0.001*cm;
+	  if(col*nbrow+row==28) adjust_y=-0.001*cm;
+	  if(col*nbrow+row==31) adjust_y=0.001*cm;
+	  if(col*nbrow+row==43) {adjust_x=0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==45) {adjust_x=0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==57) adjust_x=0.002*cm;
+	  if(col*nbrow+row==76) adjust_y=-0.001*cm;
+	  if(col*nbrow+row==83) adjust_y=0.001*cm;
+	  if(col*nbrow+row==93) {adjust_x=0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==98) {adjust_x=0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==110) adjust_y=0.001*cm;
+	  if(col*nbrow+row==115) adjust_y=0.001*cm;
+	  if(col*nbrow+row==125) {adjust_x=0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==130) {adjust_x=0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==140) adjust_y=0.001*cm;
+	  if(col*nbrow+row==142) {adjust_x=-0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==155) {adjust_x=0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==157) {adjust_x=0.002*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==159) adjust_y=0.002*cm;
+	  if(col*nbrow+row==165) adjust_x=0.001*cm;
+	}
+
+	else if(run_number>=13800){
+	  //Fall 2016
+	  if(col*nbrow+row==10) adjust_x=-0.001*cm;
+	  if(col*nbrow+row==25) adjust_x=0.001*cm;
+	  if(col*nbrow+row==27) adjust_y=-0.002*cm;
+	  if(col*nbrow+row==28) adjust_y=0.002*cm;
+	  if(col*nbrow+row==44) {adjust_x=-0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==46) {adjust_x=-0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==57) adjust_x=0.002*cm;
+	  if(col*nbrow+row==61) {adjust_x=0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==63) {adjust_x=0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==65) {adjust_x=-0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==68) adjust_y=-0.001*cm;
+	  if(col*nbrow+row==69) {adjust_x=-0.0015*cm; adjust_y=0.0015*cm;}
+	  if(col*nbrow+row==78) {adjust_x=-0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==82) {adjust_x=0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==83) {adjust_x=0.001*cm; adjust_y=0.002*cm;}
+	  if(col*nbrow+row==85) {adjust_x=-0.0015*cm; adjust_y=0.0015*cm;}
+	  if(col*nbrow+row==95) {adjust_x=0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==98) {adjust_x=0.001*cm; adjust_y=-0.002*cm;}
+	  if(col*nbrow+row==100) {adjust_x=0.0015*cm; adjust_y=-0.0015*cm;}
+	  if(col*nbrow+row==127) adjust_y=0.001*cm;
+	  if(col*nbrow+row==131) {adjust_x=-0.001*cm; adjust_y=0.001*cm;}
+	  if(col*nbrow+row==142) {adjust_x=-0.002*cm; adjust_y=0.002*cm;}
+	  if(col*nbrow+row==146) {adjust_x=0.001*cm; adjust_y=-0.001*cm;}
+	  if(col*nbrow+row==157) {adjust_x=0.002*cm; adjust_y=-0.002*cm;}
+	  if(col*nbrow+row==163) {adjust_x=-0.002*cm; adjust_y=0.002*cm;}
+	  if(col*nbrow+row==178) {adjust_x=0.002*cm; adjust_y=-0.002*cm;}
+	  if(col*nbrow+row==195) adjust_x=0.001*cm;
+	}
 	
+	/*
+	//2010
 	if (col*nbrow+row==6) adjust_y=-0.003*cm;
 	if (col*nbrow+row==7) adjust_y=0.0025*cm;
 	if (col*nbrow+row==29){ 
@@ -237,6 +342,7 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
 	  adjust_x=0.001*cm; adjust_y=0.001*cm;
 	}
 	if (col*nbrow+row==195) adjust_x=0.003*cm;
+	*/
 
 	x=(x_block[col*nbrow+row]/10)*cm+adjust_x*cm;
 	y=(y_block[col*nbrow+row]/10)*cm+adjust_y*cm;
@@ -257,7 +363,7 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
 	z_laiton=-0.5*cm-1*flas_length-0.999*block_length/2.+z_block;
 	z_G10=-flas_length/2-0.999*block_length/2.+z_block;
 	
-	
+	/*
 	if (col*nbrow+row==SShim[nSShim]){
 	  nSShim=nSShim+1;
 	  CaloGeom->SShim(SShim_log, Calo_log, G4ThreeVector(
@@ -271,7 +377,8 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
 	  (x_block[col*nbrow+row]/10)/2*cm+(x_block[col*nbrow+row+1]/10)/2*cm+x_global,
 	  (y_block[col*nbrow+row]/10)/2*cm+(y_block[col*nbrow+row+1]/10)/2*cm,z_block), col*nbrow+row);
 	}
-	
+	*/
+
 	CaloGeom->G10(G10_log, Calo_log, G4ThreeVector(x+x_global,y,z_G10), col*nbrow+row);
 	
 	CaloGeom->Screw(Screw_log, Calo_log, G4ThreeVector(x+x_global,y,z_laiton), col*nbrow+row);
@@ -340,4 +447,3 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
 
   return;
 }
-
