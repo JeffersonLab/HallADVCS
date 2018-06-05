@@ -29,7 +29,8 @@
 #include "DVCSCalo.hh"
 #include "TDVCSDB.h"
 #include "dvcsGlobals.hh"
-
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh""
 
 DVCSCaloConstruction::DVCSCaloConstruction()
  : calorimeterBlock_log(0),  Laiton_frame_log(0), G10_log(0), Screw_log(0), Tyvek_log(0), Tedlar_log(0), OutAl_log(0), PVC_log(0), InAl_log(0),
