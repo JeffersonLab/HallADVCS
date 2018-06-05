@@ -447,3 +447,4 @@ void DVCSCaloConstruction::Construction(G4LogicalVolume* Log, G4double calo_dist
 
   return;
 }
+
