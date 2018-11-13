@@ -1,0 +1,50 @@
+#include "dvcs_Calo_SD.hh"
+#include "G4HCofThisEvent.hh"
+#include "G4Step.hh"
+#include "G4ThreeVector.hh"
+#include "G4SDManager.hh"
+#include "G4ios.hh"
+#include "G4UnitsTable.hh"
+
+#include "G4RunManager.hh"
+#include "dvcsEventAction.hh"
+
+dvcs_Calo_SD::dvcs_Calo_SD(G4String name, dvcsEventAction *event_action) :G4VSensitiveDetector(name)
+{
+  G4String HCname;  
+  collectionName.insert(HCname="trackerCollection");
+}
+
+dvcs_Calo_SD::~dvcs_Calo_SD()
+{}
+
+void dvcs_Calo_SD::Initialize(G4HCofThisEvent* HCE)
+{
+  trackerCollection = new dvcsHitsCollection(SensitiveDetectorName,collectionName[0]); 
+  static G4int HCID = -1;
+  if(HCID<0)
+    { 
+      HCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
+    }
+  HCE->AddHitsCollection( HCID, trackerCollection ); 
+  
+}
+
+
+G4bool dvcs_Calo_SD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
+{
+  G4VPhysicalVolume* volume 
+    = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+  G4StepPoint* point1 = aStep->GetPreStepPoint();
+  G4Track *atrack = aStep->GetTrack();
+  
+  int copy_nmb = volume->GetCopyNo();
+
+  if( copy_nmb >=100 && copy_nmb < 308 )
+    {
+      ev_act->AddEdep(copy_nmb - 100, aStep->GetTotalEnergyDeposit()/MeV);
+    }
+}
+
+void dvcs_Calo_SD::EndOfEvent(G4HCofThisEvent*)
+{}

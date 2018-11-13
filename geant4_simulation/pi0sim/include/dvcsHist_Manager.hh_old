@@ -1,0 +1,46 @@
+#ifndef DVCS_HISTO_MANAGER
+#define DVCS_HISTO_MANAGER 1
+
+#include "globals.hh"
+
+#include "TDVCSEvent.h"
+#include "TCaloEvent.h"
+#include "TLorentzVector.h"
+#include "dvcsObj_Manager.hh"
+
+class TLorentzVector;
+class TFile;
+class TTree;
+class TVector3;
+
+class dvcsHist_Manager
+{
+public:
+  dvcsHist_Manager( ObjManager * );
+  ~dvcsHist_Manager();
+  
+  void Book();
+  void Save();
+  TCaloEvent* GetCalo_Pointer();
+  TDVCSEvent* GetDVCS_Pointer();
+
+  //void Fill_Ntuple( double, double *, double *, double *, double *, double *, TCaloEvent *);
+  void Fill_Ntuple( double, double *, double *, double *, double *, double *);
+  
+private:
+  TFile *file_out;
+  TTree *atree;
+
+  TCaloEvent *calo_ev;
+  TDVCSEvent *dvcs_ev;
+  TLorentzVector *L_calo_phot;
+  //const int n_part = 5; // init em, scat_em, photon, proton, em at HRS
+  G4double Px[5];
+  G4double Py[5];
+  G4double Pz[5];
+  G4double E[5];
+  G4double vz;
+  G4double calo_edep[208];
+};
+
+#endif
