@@ -1,0 +1,26 @@
+#ifndef DVCS_CALO_SD_B
+#define DVCS_CALO_SD_B 1
+
+#include "G4VSensitiveDetector.hh"
+#include "dvcsEventAction.hh"
+#include "dvcsHit.hh"
+
+class G4Step;
+class G4HCofThisEvent;
+
+class dvcs_Calo_SD : public G4VSensitiveDetector
+{
+public:
+  dvcs_Calo_SD(G4String, dvcsEventAction *);
+  ~dvcs_Calo_SD();
+  
+  void Initialize(G4HCofThisEvent*);
+  G4bool ProcessHits(G4Step*, G4TouchableHistory*);
+  void EndOfEvent(G4HCofThisEvent*);
+
+private:
+  dvcsEventAction *ev_act;
+  dvcsHitsCollection *trackerCollection;
+}
+
+#endif

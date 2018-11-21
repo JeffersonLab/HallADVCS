@@ -1,0 +1,79 @@
+#include "dvcsHist_Manager.hh"
+#include "G4UnitsTable.hh"
+
+#include "TLorentzVector.h"
+#include "TFile.h"
+#include "TTree.h"
+
+#include "TCaloEvent.h"
+
+dvcsHist_Manager::dvcsHist_Manager( ObjManager *aa ):
+  file_out(0), atree(0)
+{
+  calo_ev = aa->GetCaloEvent_ptr();
+  L_calo_phot = aa->GetCaloPhot_ptr();
+  //calo_ev = new TCaloEvent();
+  //dvcs_ev = new TDVCSEvent();
+  cout<<"calo_ev at initialization="<<calo_ev<<endl;
+}
+
+dvcsHist_Manager::~dvcsHist_Manager()
+{
+  delete file_out;
+  delete atree;
+  delete calo_ev;
+}
+
+TCaloEvent* dvcsHist_Manager::GetCalo_Pointer()
+{
+  return calo_ev;
+}
+
+TDVCSEvent *dvcsHist_Manager::GetDVCS_Pointer()
+{
+  return dvcs_ev;
+}
+
+void dvcsHist_Manager::Book()
+{
+  file_out = new TFile("DVCS_Geant_analyse.root", "Recreate");
+  atree = new TTree("tr1", "DVCS tree Geant output");
+  atree->Branch("Px", Px, "Px[5]/D");
+  atree->Branch("Py", Py, "Py[5]/D");
+  atree->Branch("Pz", Pz, "Pz[5]/D");
+  atree->Branch("E", E, "E[5]/D");
+  atree->Branch("vz", &vz, "vz/D");
+  atree->Branch("calo_edep", calo_edep, "calo_edep[208]/D");
+  atree->Branch("calo_event.", "TCaloEvent", &calo_ev, 32000, 12);
+  atree->Branch("calo_phot.", "TLorentzVector", &L_calo_phot, 3200, 99);
+  G4cout<<"calo_ev="<<calo_ev<<G4endl;
+}
+
+void dvcsHist_Manager::Save()
+{
+  atree->Write();
+  file_out->Close();
+}
+
+//void dvcsHist_Manager::Fill_Ntuple( double z, double *Px_, double *Py_, double *Pz_, double *E_, double *calo_edep_, TCaloEvent *calo_event_ )
+void dvcsHist_Manager::Fill_Ntuple( double z, double *Px_, double *Py_, double *Pz_, double *E_, double *calo_edep_ )
+{
+  for( int i = 0; i < 5; i++ )
+    {
+      Px[i] = *(Px_ + i);
+      Py[i] = *(Py_ + i);
+      Pz[i] = *(Pz_ + i);
+      E[i] = *(E_ + i);
+    }
+  
+  //calo_ev = calo_event_;
+  vz = z;
+
+  for( int i = 0; i < 208; i++ )
+    {
+      calo_edep[i] = *(calo_edep_ + i);
+    }
+  //G4cout<<"Event Action::Fill_Ntuple"<<G4endl;
+  atree->Fill();
+  //calo_ev->Reset();
+}

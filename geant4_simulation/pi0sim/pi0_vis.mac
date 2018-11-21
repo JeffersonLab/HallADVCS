@@ -1,0 +1,28 @@
+/control/verbose 1
+/run/verbose 1
+
+/run/initialize
+#/vis/open OGLIX
+#/vis/open OGLI
+#/vis/open RayTracer
+/vis/open OGL
+#/vis/open OGLIQt
+#/vis/open HepRepFile
+
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+
+/vis/viewer/set/auxiliaryEdge
+
+/vis/drawVolume
+
+
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+
+/vis/scene/endOfEventAction accumulate
+
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings

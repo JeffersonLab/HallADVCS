@@ -1,0 +1,33 @@
+<Request>
+  <Email email="alis@jlab.org" request="false" job="true"/>
+  <Project name="halla-dvcs"/>
+  <Track name="debug"/>
+  <Name name="pi0_simulation"/>
+  <OS name="centos7"></OS>
+  <Memory space="2" unit="GB"/> 
+  <CPU core="6"/>
+  <Variable name="pi0_dest" value="/work/halla/dvcs/disk1/salina/pi0sim"/>
+  <Variable name="pi0_build" value="/work/halla/dvcs/disk1/salina/pi0sim/build"/>
+  <!--Command><![CDATA[source setup]]></Command--> 
+  <List name="kin">
+  484
+  </List>
+  <ForEach list="kin">
+    <Input src="${pi0_build}/set_dvcs2017_OS7.sh" dest="set_dvcs2017_OS7.sh"/>
+    <Input src="${pi0_build}/sim_pi0_command.pl" dest="sim_pi0_command.pl"/>
+    <Input src="${pi0_build}/pi0_2010.cc" dest="pi0_2010.cc"/>
+    <Input src="${pi0_build}/pi0_2017" dest="pi0_2017"/>
+    <Input src="${pi0_build}/run.mac" dest="run.mac"/>
+    <Input src="${pi0_build}/dvcs_run.mac" dest="dvcs_run.mac"/>
+    <Input src="${pi0_dest}/CMakeLists.txt" dest="CMakeLists.txt"/>
+    <Input src="${pi0_build}/jlabDVCS12.csh" dest="jlabDVCS12.csh"/>
+    <!--Input src="${pi0_build}/ce/*.env" dest="*.env"/-->
+    <!--Input src="${pi0_build}/" dest="*.env"/-->
+    <Job>
+      <Command><![CDATA[
+      source ${pi0_build}/set_dvcs2017_OS7.sh
+      perl sim_pi0_command.pl ${kin}
+      ]]></Command>
+    </Job>
+  </ForEach>
+</Request>
